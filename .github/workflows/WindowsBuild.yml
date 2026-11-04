@@ -34,6 +34,7 @@ jobs:
           haxelib setup C:\haxelib
           haxelib install hmm --quiet
           haxelib run hmm install
+          node tools/patch-hxcpp-request-full.js
 
       - name: Extract current version
         id: get_version
