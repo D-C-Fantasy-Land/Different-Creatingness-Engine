@@ -4,10 +4,12 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, execSync } = require('node:child_process');
 
 function libraryRoots(name, requiredFiles) {
-  const output = execFileSync('haxelib', ['path', name], { encoding: 'utf8' });
+  const output = process.platform === 'win32'
+    ? execSync(`haxelib path ${name}`, { encoding: 'utf8' })
+    : execFileSync('haxelib', ['path', name], { encoding: 'utf8' });
   return output
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -17,7 +19,7 @@ function libraryRoots(name, requiredFiles) {
 }
 
 function patchFlxText(file) {
-  let source = fs.readFileSync(file, 'utf8');
+  let source = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
   let changed = false;
 
   if (!source.includes('uiSizeScale')) {
@@ -59,7 +61,7 @@ function patchFlxText(file) {
 }
 
 function patchFlxButton(file) {
-  let source = fs.readFileSync(file, 'utf8');
+  let source = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
   let changed = false;
   const classHeader = 'class FlxButton extends FlxTypedButton<FlxText>\n{';
   const buttonStatics = `${classHeader}
@@ -150,8 +152,8 @@ function patchHxcpp() {
   for (const root of roots) {
     const headerPath = path.join(root, 'include', 'hx', 'GC.h');
     const immixPath = path.join(root, 'src', 'hx', 'gc', 'Immix.cpp');
-    let header = fs.readFileSync(headerPath, 'utf8');
-    let immix = fs.readFileSync(immixPath, 'utf8');
+    let header = fs.readFileSync(headerPath, 'utf8').replace(/\r\n/g, '\n');
+    let immix = fs.readFileSync(immixPath, 'utf8').replace(/\r\n/g, '\n');
     let changed = false;
 
     if (!header.includes('__hxcpp_gc_request_full')) {
