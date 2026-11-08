@@ -29,7 +29,7 @@ jobs:
     runs-on: macos-14
     environment: ${{ github.repository == 'D-C-LushiFu/Different-Creatingness-Engine' && github.event_name != 'pull_request_target' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && 'private-build' || 'public-build' }}
     concurrency:
-      group: ${{ github.workflow }}-Android-${{ github.ref }}
+      group: ${{ github.workflow }}-Android-${{ github.ref }}-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       - name: Checkout

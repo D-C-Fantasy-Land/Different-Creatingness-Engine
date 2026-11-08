@@ -13,6 +13,7 @@ jobs:
     runs-on: macos-${{matrix.version}}
     environment: ${{ github.repository == 'D-C-LushiFu/Different-Creatingness-Engine' && 'private-build' || 'public-build' }}
     strategy:
+      fail-fast: false
       matrix:
         version: [14, 15]
     steps:
