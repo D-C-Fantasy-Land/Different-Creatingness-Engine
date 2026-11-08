@@ -133,12 +133,6 @@ jobs:
           name: iOSBuild
           path: artifacts/
 
-      - name: Download macOS14 Build
-        uses: actions/download-artifact@v4
-        with:
-          name: macOSBuild-14
-          path: artifacts/
-
       - name: Download macOS15 Build
         uses: actions/download-artifact@v4
         with:
