@@ -12,10 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check Discord webhook
-        if: ${{ secrets.DISCORD_RELEASE_WEBHOOK == '' }}
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
         run: |
-          echo "::error::Repository secret DISCORD_RELEASE_WEBHOOK is not configured."
-          exit 1
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "::error::Repository secret DISCORD_RELEASE_WEBHOOK is not configured."
+            exit 1
+          fi
 
       - name: Post release embed to Discord
         env:
@@ -29,8 +32,8 @@ jobs:
           notes="$(jq -r '.body // "暂无更新说明。"' <<< "$RELEASE_EVENT" | head -c 3500)"
           release_url="$(jq -r '.html_url' <<< "$RELEASE_EVENT")"
           assets="$(jq -r '
-            [.assets[] | "[" + .name + "]( " + .browser_download_url + ")"] | join("\\n")
-          ' <<< "$RELEASE_EVENT" | sed 's/]( /](/g' | head -c 1000)"
+            [.assets[] | "[" + .name + "](" + .browser_download_url + ")"] | join("\\n")
+          ' <<< "$RELEASE_EVENT" | head -c 1000)"
           if [ -z "$assets" ]; then
             assets="[查看 Release 与下载]($release_url)"
           fi
