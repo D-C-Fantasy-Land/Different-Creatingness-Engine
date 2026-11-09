@@ -1,6 +1,3 @@
-# Codename Engine compatibility source
+注意！该支持已暂停！除非后续CNE团队允许后续支持否则保持暂停支持
 
-Runs on desktop and mobile. Mobile input is bridged to D.C.E.'s current touch controls instead of carrying the old standalone Codename mobile input fork.
-
-[Codename Engine](https://github.com/CodenameCrew/CodenameEngine/)
-Based on the commit [98207cbd2e931ddd267ec834f67c13ccea546863](https://github.com/CodenameCrew/CodenameEngine/tree/98207cbd2e931ddd267ec834f67c13ccea546863).
+[CodenameEngine Readme.md](https://github.com/CodenameCrew/CodenameEngine/blob/main/README.md)
