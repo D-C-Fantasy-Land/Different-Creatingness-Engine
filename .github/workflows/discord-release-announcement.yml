@@ -1,0 +1,63 @@
+name: Discord Release Announcement
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Discord webhook
+        if: ${{ secrets.DISCORD_RELEASE_WEBHOOK == '' }}
+        run: |
+          echo "::error::Repository secret DISCORD_RELEASE_WEBHOOK is not configured."
+          exit 1
+
+      - name: Post release embed to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
+          RELEASE_EVENT: ${{ toJson(github.event.release) }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="$(jq -r '.tag_name' <<< "$RELEASE_EVENT")"
+          notes="$(jq -r '.body // "暂无更新说明。"' <<< "$RELEASE_EVENT" | head -c 3500)"
+          release_url="$(jq -r '.html_url' <<< "$RELEASE_EVENT")"
+          assets="$(jq -r '
+            [.assets[] | "[" + .name + "]( " + .browser_download_url + ")"] | join("\\n")
+          ' <<< "$RELEASE_EVENT" | sed 's/]( /](/g' | head -c 1000)"
+          if [ -z "$assets" ]; then
+            assets="[查看 Release 与下载]($release_url)"
+          fi
+
+          payload="$(jq -n \
+            --arg version "$version" \
+            --arg notes "$notes" \
+            --arg assets "$assets" \
+            --arg release_url "$release_url" \
+            '{
+              embeds: [{
+                title: ("D.C.E. 新版本发布 · " + $version),
+                url: $release_url,
+                description: $notes,
+                color: 3447003,
+                fields: [{
+                  name: "下载",
+                  value: $assets,
+                  inline: false
+                }],
+                footer: {text: "Different-Creatingness-Engine"},
+                timestamp: (now | todateiso8601)
+              }],
+              allowed_mentions: {parse: []}
+            }')"
+
+          curl --fail-with-body --silent --show-error \
+            -H "Content-Type: application/json" \
+            -d "$payload" \
+            "$DISCORD_WEBHOOK"
