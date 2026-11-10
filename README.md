@@ -1,6 +1,12 @@
 Nothing bitch of Haxe holy shit
 
+> [!CAUTION]
+> 注意！从本版本开始。在CNE Crew同意我做面向CNE的兼容否则CNE的兼容就<h1>**永远**</h1>停留在beta（而且还是只做了一点的兼容性所以你可以准备看烟花了）
+> <h6>或许没人知道beta被剔除的东西是永远都不会上架到正式版本的不过应该0人在意吧我觉得毕竟没人看?</h6>
 
+<br /><br />
+<div align="center">~~请注意这并不是性压抑的产物而是一个正常人进行思考后的创作~~</div>
+<br /><br />
 
 <div align="center">
   <h1>🎤 Different Creatingness Engine (D.C.E.) 🎤</h1>
@@ -10,7 +16,7 @@ Nothing bitch of Haxe holy shit
 
 ## 这是什么东西？
 
-D.C.E.（Different Creatingness Engine）是一个以 Friday Night Funkin' 为基础的引擎项目。它带着 Psych Engine 的根系，也接入了 V-Slice 0.8.4 与 Codename Engine 1.0.1 相关兼容能力；目前正处于持续开发中，所以菜单可能比你的周末计划更新得还快。
+D.C.E.（Different Creatingness Engine）是一个以 Friday Night Funkin' 为基础的引擎项目。它带着 Psych Engine 的根系，也接入了 V-Slice 0.8.4 与 ~~Codename Engine 1.0.1~~ 相关兼容能力；目前正处于持续开发中，所以菜单可能比你的周末计划更新得还快。
 
 本仓库包含引擎源码、资源、构建配置、工具，以及一些负责让开发者少盯着黑窗口发呆的编辑器功能。它不是官方 FNF，也不是 Psych Engine 官方发行版；请不要把测试构建当作宇宙稳定常数。
 
@@ -20,7 +26,7 @@ D.C.E.（Different Creatingness Engine）是一个以 Friday Night Funkin' 为�
 - **编辑器升级：**图表编辑器持续改进，并加入相机编辑器（请注意这是测试版。如果这东西给你的谱面搞炸了那我只能congratulations）、移动端编辑输入辅助与键位查看工具。
 - **输入与移动端：**继续完善触屏、键盘和控制器的协作，尽量避免它们在同一帧争夺方向盘。
 - **语言与外观：**项目包含多语言文本、Note Splash 皮肤和界面调整。翻译若有奇怪语气，那可能是文本本人在即兴发挥。
-- **兼容与播放体验：**维护 Psych 模组兼容，并提供 V-Slice、Codename 相关兼容路径；支持录像/回放相关能力。
+- **兼容与播放体验：**维护 Psych 模组兼容，并提供 V-Slice、~~Codename~~ 相关兼容路径；支持录像/回放相关能力。
 - **开发诊断：**加入性能与资源监视、构建辅助脚本，以及 Windows 中文路径兼容处理。
 
 功能仍在变化中；具体可用范围以当前源码和发行说明为准。某个功能出现在源码里，不代表它已经被每台设备、每个模组、每只D.C.LushiFu测试过。
@@ -51,7 +57,7 @@ D.C.E.（Different Creatingness Engine）是一个以 Friday Night Funkin' 为�
 
 使用或再发布本项目代码时，请保留原作者与上游项目的署名，并检查相关素材和依赖各自的授权要求。FNF 及其相关作品归其各自权利人所有。
 
-### 别忘了我的Discord！<img src="https://cdn.simpleicons.org/discord/5865F2" width="20" height="20" alt="Discord" style="vertical-align: middle;"> [这里](https://discord.gg/ZcvCQDzUPs)可以加入我的Discord频道
+### 别忘了我的Discord！<img src="https://cdn.simpleicons.org/discord/5865F2" width="20" height="20" alt="Discord" style="vertical-align: middle;"> [这里](https://discord.gg/ZcvCQDzUPs)可以加入我的Discord频道来反馈问题什么的
 
 ---
 
