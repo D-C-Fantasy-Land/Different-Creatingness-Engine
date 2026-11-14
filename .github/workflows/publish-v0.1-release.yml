@@ -1,0 +1,104 @@
+name: Publish V0.1 Release
+
+on:
+  push:
+    branches:
+      - release-assets/v0.1
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Windows build
+        uses: actions/download-artifact@v4
+        with:
+          name: windowsBuild
+          path: artifacts/windows
+          repository: D-C-Fantasy-Land/Different-Creatingness-Engine
+          run-id: 41773281424
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Linux build
+        uses: actions/download-artifact@v4
+        with:
+          name: LinuxBuild
+          path: artifacts/linux
+          repository: D-C-Fantasy-Land/Different-Creatingness-Engine
+          run-id: 41773281385
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download macOS 14 build
+        uses: actions/download-artifact@v4
+        with:
+          name: macOSBuild-14
+          path: artifacts/macos-14
+          repository: D-C-Fantasy-Land/Different-Creatingness-Engine
+          run-id: 41773281349
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download macOS 15 build
+        uses: actions/download-artifact@v4
+        with:
+          name: macOSBuild-15
+          path: artifacts/macos-15
+          repository: D-C-Fantasy-Land/Different-Creatingness-Engine
+          run-id: 41773281349
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Android build
+        uses: actions/download-artifact@v4
+        with:
+          name: androidBuild
+          path: artifacts/android
+          repository: D-C-Fantasy-Land/Different-Creatingness-Engine
+          run-id: 41773281493
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download iOS build
+        uses: actions/download-artifact@v4
+        with:
+          name: iOSBuild
+          path: artifacts/ios
+          repository: D-C-Fantasy-Land/Different-Creatingness-Engine
+          run-id: 41773281493
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify release packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=(
+            artifacts/windows/windows.zip
+            artifacts/linux/linux.zip
+            artifacts/macos-14/macOS-14.zip
+            artifacts/macos-15/macOS-15.zip
+            artifacts/android/android.zip
+            artifacts/ios/ios.zip
+          )
+          for file in "${expected[@]}"; do
+            test -s "$file"
+            ls -lh "$file"
+          done
+
+      - name: Publish V0.1
+        uses: softprops/action-gh-release@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: V0.1
+          target_commitish: a7ba23912250ac50945fd50767edc4c0b3b6029d
+          name: V0.1
+          body: D.C.E V0.1 cross-platform builds.
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: |
+            artifacts/windows/windows.zip
+            artifacts/linux/linux.zip
+            artifacts/macos-14/macOS-14.zip
+            artifacts/macos-15/macOS-15.zip
+            artifacts/android/android.zip
+            artifacts/ios/ios.zip
