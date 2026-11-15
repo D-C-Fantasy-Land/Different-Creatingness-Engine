@@ -14,14 +14,13 @@ class SelectGameSubState extends MusicBeatSubstate
 	var ui:FlxSprite = new FlxSprite().makeGraphic(FlxG.width - 200, FlxG.height - 200, 0xFF000000);
     var subcameras:FlxCamera;
 
-	var suppostedGames:Array<String> = #if CODENAME_ENGINE_COMPAT ["Origin Funkin", "CodeName Engine"] #else ["Origin Funkin"] #end;
+	var suppostedGames:Array<String> = ["Origin Funkin"];
 	var selectedGroup:FlxSpriteGroup = new FlxSpriteGroup();
 	var backButton:GeneralBack;
 
 	var nowSelected:Int = 0;
 
 	var infoBG1:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuExtend/SelectGameSubState/originFunkin'));
-	var infoBG2:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuExtend/SelectGameSubState/Codename'));
 
 	var transitioning:Bool = false;
 	var zoomTween:FlxTween;
@@ -78,18 +77,13 @@ class SelectGameSubState extends MusicBeatSubstate
 		selectedGroup.y = 100;
 
 		infoBG1.cameras = [subcameras];
-		infoBG2.cameras = [subcameras];
 
 		infoBG1.screenCenter();
-		infoBG2.screenCenter();
 
 		infoBG1.scale.set(0.5, 0.5);
-		infoBG2.scale.set(0.5, 0.5);
 
 		add(infoBG1);
-		add(infoBG2);
 
-		infoBG2.visible = false;
 
 		backButton = new GeneralBack(0, FlxG.height * 0.9, FlxG.width * 0.2, FlxG.height * 0.1,
 			Language.get('back', 'main'), EngineSet.mainColor, requestClose);
@@ -335,19 +329,6 @@ class SelectGameSubState extends MusicBeatSubstate
 					return false;
 				}
 
-			case 1:
-				#if CODENAME_ENGINE_COMPAT
-				if (!codenamechain.CodeNameMode.canEnter())
-				{
-					SUtil.showPopUp(codenamechain.CodeNameMode.preparationError, "CodeName");
-					return false;
-				}
-				if (!originfunkin.OriginFunkinConfig.requestCodeName())
-				{
-					SUtil.showPopUp("Could not save the CodeName startup request.", "D.C.E.");
-					return false;
-				}
-				#end
 		}
 
 		try
@@ -371,11 +352,9 @@ class SelectGameSubState extends MusicBeatSubstate
 		switch (nowSelected) {
 			case 0:
 				infoBG1.visible = true;
-				infoBG2.visible = false;
 
 			case 1:
 				infoBG1.visible = false;
-				infoBG2.visible = true;
 		}
 	}
 
