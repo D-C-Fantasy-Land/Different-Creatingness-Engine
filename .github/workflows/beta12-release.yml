@@ -1,0 +1,100 @@
+name: Beta1.2 Release
+
+on:
+  push:
+    branches:
+      - codex/release-beta12
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  mobile-build:
+    name: Mobile Build (Android and iOS)
+    uses: ./.github/workflows/MobileBuild.yml
+    with:
+      dependencies_to_update: 'all'
+    secrets: inherit
+
+  macos-build:
+    name: macOS Build
+    needs: mobile-build
+    uses: ./.github/workflows/MacBuild.yml
+    secrets: inherit
+
+  windows-build:
+    name: Windows Build
+    uses: ./.github/workflows/WindowsBuild.yml
+    secrets: inherit
+
+  linux-build:
+    name: Linux Build
+    uses: ./.github/workflows/LinuxBuild.yml
+    secrets: inherit
+
+  publish:
+    name: Publish Beta1.2
+    needs: [mobile-build, macos-build, windows-build, linux-build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Download Android build
+        uses: actions/download-artifact@v4
+        with:
+          name: androidBuild
+          path: artifacts/
+      - name: Download iOS build
+        uses: actions/download-artifact@v4
+        with:
+          name: iOSBuild
+          path: artifacts/
+      - name: Download macOS build
+        uses: actions/download-artifact@v4
+        with:
+          name: macOSBuild-15
+          path: artifacts/
+      - name: Download Windows build
+        uses: actions/download-artifact@v4
+        with:
+          name: windowsBuild
+          path: artifacts/
+      - name: Download Linux build
+        uses: actions/download-artifact@v4
+        with:
+          name: LinuxBuild
+          path: artifacts/
+      - name: List release packages
+        run: find artifacts -type f -name '*.zip' -print
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: Beta1.2
+          name: Beta1.2
+          prerelease: false
+          body: |
+            ## Beta1.2 — CNE 兼容暂停与稳定性修复
+
+            ### 修改
+            - 移除了游戏选择页的 CodeName Engine 启动入口，并关闭 CNE 兼容编译开关。
+            - 移除了暂停支持的 source-codename 占位内容。
+
+            ### 修复与优化
+            - 修复系统刷新率设置无法正常切换的问题。
+            - 更新版本信息与 Android versionCode，便于从 Beta1.1 升级安装。
+
+            ---
+
+            ## Beta1.2 — CNE Compatibility Paused and Stability Fixes
+
+            ### Changed
+            - Removed the CodeName Engine launch option and disabled CNE compatibility in the build.
+            - Removed the paused source-codename placeholder.
+
+            ### Fixes and improvements
+            - Fixed an issue that prevented the system refresh-rate setting from changing correctly.
+            - Updated version metadata and the Android versionCode for upgrades from Beta1.1.
+          files: artifacts/**/*.zip
+          overwrite_files: true
