@@ -212,7 +212,7 @@ class SelectGameSubState extends MusicBeatSubstate
 
 	function infoBackgroundJustPressed():Bool
 	{
-		var target:FlxSprite = nowSelected == 0 ? infoBG1 : infoBG2;
+		var target:FlxSprite = infoBG1;
 		if (!target.visible)
 			return false;
 
