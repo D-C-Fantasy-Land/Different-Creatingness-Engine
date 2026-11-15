@@ -45,8 +45,7 @@
 	<define name="ORIGIN_FUNKIN_COMPAT"/>
 	<!-- Codename runs as an isolated state chain with D.C.E.'s state-aware
 	     mobile input layer. Keyboard, gamepad and touch stay active together. -->
-	<define name="CODENAME_ENGINE_COMPAT" />
-	<define name="TOUCH_CONTROLS" if="mobile" />
+		<define name="TOUCH_CONTROLS" if="mobile" />
 	<!-- Match Codename's HScript abstract surface. This is required for abstract
 	     statics such as FlxColor.fromRGB. Abstracts are registered explicitly;
 	     D.C.E.'s newer Flixel must not be force-included package-wide. -->
@@ -128,10 +127,8 @@
 	<set name="BUILD_DIR" value="export/gc-exp" if="gc_exp" />
 	<classpath name="source" />
 	<classpath name="source-originFunkin" />
-	<classpath name="source-codename" if="CODENAME_ENGINE_COMPAT" />
 	<!-- 移动端专用：桌面文件对话框 API 的桩实现（source 内独立 classpath，避免与 openfl 冲突） -->
 	<classpath path="source/mobile-shim" if="mobile" />
-	<haxeflag name="--macro" value="codename.funkin.backend.system.macros.Macros.initMacros()" if="CODENAME_ENGINE_COMPAT"/>
 
 	<!-- __________________________ Game Assets & Etc. __________________________ -->
 
