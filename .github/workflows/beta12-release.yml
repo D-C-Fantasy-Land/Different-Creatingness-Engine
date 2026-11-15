@@ -16,11 +16,11 @@ jobs:
     with:
       dependencies_to_update: 'all'
     secrets: inherit
-    continue-on-error: true
 
   macos-build:
     name: macOS Build
     needs: mobile-build
+    if: always()
     uses: ./.github/workflows/MacBuild.yml
     secrets: inherit
 
@@ -37,6 +37,7 @@ jobs:
   publish:
     name: Publish Beta1.2
     needs: [mobile-build, macos-build, windows-build, linux-build]
+    if: always()
     runs-on: ubuntu-latest
     permissions:
       contents: write
