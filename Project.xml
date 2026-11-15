@@ -16,7 +16,7 @@
 	     否则 Android 会拒绝覆盖安装（弹「降级安装」提示）。 -->
 
 	<!-- 我的妈呀大姐不是说好的一行代码多平台无痛跑吗怎么我还要自己修好几天才把兼容性修好  ——D.C.LushiFu -->
-	<app title="D.C.E." file="DCE" packageName="com.DCEEngine" package="com.DCEEngine" main="Main" version="Beta1.2" build-number="35261115" company="D.C.E. crew" />
+	<app title="D.C.E." file="DCE" packageName="com.DCEEngine" package="com.DCEEngine" main="Main" version="1.2.0" build-number="35261115" company="D.C.E. crew" />
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
 	
