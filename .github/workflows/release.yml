@@ -207,7 +207,8 @@ jobs:
               allowed_mentions: {parse: []}
             }')"
 
-          curl --fail-with-body --silent --show-error \
+          response="$(curl --fail-with-body --silent --show-error \
             -H "Content-Type: application/json" \
             -d "$payload" \
-            "$DISCORD_WEBHOOK"
+            "${DISCORD_WEBHOOK}?wait=true")"
+          jq -e '.id' <<< "$response" >/dev/null
