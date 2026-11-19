@@ -3,6 +3,12 @@ name: Discord Release Announcement
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      from_tag:
+        description: "从此版本起补发所有已发布 Release（例如 Beta1.0）"
+        required: true
+        default: "Beta1.0"
 
 permissions:
   contents: read
@@ -11,56 +17,62 @@ jobs:
   announce:
     runs-on: ubuntu-latest
     steps:
-      - name: Check Discord webhook
+      - name: Post release embeds to Discord
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FROM_TAG: ${{ inputs.from_tag }}
+        shell: bash
         run: |
+          set -euo pipefail
           if [ -z "$DISCORD_WEBHOOK" ]; then
             echo "::error::Repository secret DISCORD_RELEASE_WEBHOOK is not configured."
             exit 1
           fi
 
-      - name: Post release embed to Discord
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
-          RELEASE_EVENT: ${{ toJson(github.event.release) }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          version="$(jq -r '.tag_name' <<< "$RELEASE_EVENT")"
-          notes="$(jq -r '.body // "暂无更新说明。"' <<< "$RELEASE_EVENT" | head -c 3500)"
-          release_url="$(jq -r '.html_url' <<< "$RELEASE_EVENT")"
-          assets="$(jq -r '
-            [.assets[] | "[" + .name + "](" + .browser_download_url + ")"] | join("\\n")
-          ' <<< "$RELEASE_EVENT" | head -c 1000)"
-          if [ -z "$assets" ]; then
-            assets="[查看 Release 与下载]($release_url)"
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            releases="$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" | jq -s 'add | map(select(.draft == false)) | sort_by(.published_at)')"
+            start_index="$(jq --arg tag "$FROM_TAG" '[.[].tag_name] | index($tag) // empty' <<< "$releases")"
+            if [ -z "$start_index" ]; then
+              echo "::error::Release tag '$FROM_TAG' was not found."
+              exit 1
+            fi
+            release_items="$(jq -c --argjson index "$start_index" '.[$index:][]' <<< "$releases")"
+          else
+            release_items="$(jq -c '.release' "$GITHUB_EVENT_PATH")"
           fi
 
-          payload="$(jq -n \
-            --arg version "$version" \
-            --arg notes "$notes" \
-            --arg assets "$assets" \
-            --arg release_url "$release_url" \
-            '{
-              embeds: [{
-                title: ("D.C.E. 新版本发布 · " + $version),
-                url: $release_url,
-                description: $notes,
-                color: 3447003,
-                fields: [{
-                  name: "下载",
-                  value: $assets,
-                  inline: false
-                }],
-                footer: {text: "Different-Creatingness-Engine"},
-                timestamp: (now | todateiso8601)
-              }],
-              allowed_mentions: {parse: []}
-            }')"
+          while IFS= read -r release; do
+            [ -n "$release" ] || continue
+            version="$(jq -r '.tag_name' <<< "$release")"
+            notes="$(jq -r '.body // "暂无更新说明。"' <<< "$release" | head -c 3500)"
+            release_url="$(jq -r '.html_url' <<< "$release")"
+            assets="$(jq -r '[.assets[] | "[" + .name + "](" + .browser_download_url + ")"] | join("\\n")' <<< "$release" | head -c 1000)"
+            if [ -z "$assets" ]; then
+              assets="[查看 Release 与下载]($release_url)"
+            fi
 
-          curl --fail-with-body --silent --show-error \
-            -H "Content-Type: application/json" \
-            -d "$payload" \
-            "$DISCORD_WEBHOOK"
+            payload="$(jq -n \
+              --arg version "$version" \
+              --arg notes "$notes" \
+              --arg assets "$assets" \
+              --arg release_url "$release_url" \
+              '{
+                embeds: [{
+                  title: ("D.C.E. 新版本发布 · " + $version),
+                  url: $release_url,
+                  description: $notes,
+                  color: 3447003,
+                  fields: [{name: "下载", value: $assets, inline: false}],
+                  footer: {text: "Different-Creatingness-Engine"},
+                  timestamp: (now | todateiso8601)
+                }],
+                allowed_mentions: {parse: []}
+              }')"
+
+            curl --fail-with-body --silent --show-error \
+              -H "Content-Type: application/json" \
+              -d "$payload" \
+              "$DISCORD_WEBHOOK"
+            sleep 1
+          done <<< "$release_items"
