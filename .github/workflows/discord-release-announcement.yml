@@ -33,8 +33,12 @@ jobs:
           if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
             releases="$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" | jq -s 'add | map(select(.draft == false)) | sort_by(.published_at)')"
             start_index="$(jq --arg tag "$FROM_TAG" '[.[].tag_name] | index($tag) // empty' <<< "$releases")"
+            if [ -z "$start_index" ] && [[ "$FROM_TAG" =~ ^Beta[0-9]+\\.[0-9]+$ ]]; then
+              echo "::notice::'$FROM_TAG' does not exist; starting from the first published Beta release."
+              start_index="$(jq '[to_entries[] | select(.value.tag_name | startswith("Beta")) | .key] | first // empty' <<< "$releases")"
+            fi
             if [ -z "$start_index" ]; then
-              echo "::error::Release tag '$FROM_TAG' was not found."
+              echo "::error::No published release at or after '$FROM_TAG' was found."
               exit 1
             fi
             release_items="$(jq -c --argjson index "$start_index" '.[$index:][]' <<< "$releases")"
