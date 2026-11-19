@@ -51,7 +51,7 @@ jobs:
             version="$(jq -r '.tag_name' <<< "$release")"
             notes="$(jq -r '.body // "暂无更新说明。"' <<< "$release" | head -c 3500)"
             release_url="$(jq -r '.html_url' <<< "$release")"
-            assets="$(jq -r '[.assets[] | "[" + .name + "](" + .browser_download_url + ")"] | join("\\n")' <<< "$release" | head -c 1000)"
+            assets="$(jq -r '[.assets[] | "[" + .name + "](" + .browser_download_url + ")"] | join("\n")' <<< "$release" | head -c 1000)"
             if [ -z "$assets" ]; then
               assets="[查看 Release 与下载]($release_url)"
             fi
