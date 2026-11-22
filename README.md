@@ -73,6 +73,8 @@ D.C.E.（Different Creatingness Engine）是一个以 Friday Night Funkin' 为�
 
 本项目的贡献者信息持续整理中。感谢所有帮我翻译，以及指出“这里好像不太对劲”的朋友们。名字和头像会随项目维护情况更新。
 
+感谢 CNE 团队的支持。
+
 # Psych Engine credits
 
 | Avatar                                                                                                                            | Username                                                  | Involvement                                                 |
